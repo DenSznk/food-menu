@@ -35,7 +35,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // timer
-    const deadline = '2023-12-4';
+    const deadline = '2023-12-24';
 
     function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date());
@@ -93,4 +93,107 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
     setClock('.timer', deadline);
+
+    // modal window
+
+    const modalTrigger = document.querySelectorAll('[data-modal]'),
+    modal = document.querySelector('.modal'),
+    modalCloseBtn = document.querySelector('[data-close]');
+
+modalTrigger.forEach(btn => {
+    btn.addEventListener('click', function() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        // Либо вариант с toggle - но тогда назначить класс в верстке
+        document.body.style.overflow = 'hidden';
+    });
+});
+
+function closeModal() {
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+modalCloseBtn.addEventListener('click', closeModal);
+
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === "Escape" && modal.classList.contains('show')) {
+        closeModal();
+    }
+});
+
+// cards
+
+class MenuCard {
+    constructor(src, alt, title, descr, price, parentSelector, ...classes) {
+        this.src = src;
+        this.alt = alt;
+        this.title = title;
+        this.descr = descr;
+        this.price = price;
+        this.transfer = 27;
+        this.classes = classes;
+        this.parent = document.querySelector(parentSelector);
+        this.changeToUAH();
+    }
+
+
+    changeToUAH() {
+        this.price = this.price * this.transfer;
+    }
+
+    render() {
+        const element = document.createElement('div');
+        element.innerHTML = `
+            <div class="menu__item">
+                <img src=${this.src} alt=${this.alt}>
+                <h3 class="menu__item-subtitle">${this.title}</h3>
+                <div class="menu__item-descr">${this.descr}</div>
+                <div class="menu__item-divider"></div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                </div>
+            </div>
+        `;
+        this.parent.append(element);
+    }
+}
+
+    new MenuCard(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей',
+        9,
+        '.menu .container'
+    ).render();
+
+    new MenuCard(
+        "img/tabs/elite.jpg",
+        "elite",
+        'Меню “Премиум”',
+        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и ....',
+        14,
+        '.menu .container'
+    ).render();
+
+    new MenuCard(
+        "img/tabs/post.jpg",
+        "post",
+        'Меню "Постное"',
+        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продук',
+        7,
+        '.menu .container'
+    ).render();
+
+
+
 });
